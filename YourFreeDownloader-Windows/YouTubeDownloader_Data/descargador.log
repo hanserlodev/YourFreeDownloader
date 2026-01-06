@@ -1,0 +1,4 @@
+2025-11-11 18:57:20,879 - INFO - Descarga completada: https://www.youtube.com/watch?v=WEVPe7I0Lm0
+2025-12-09 18:15:36,856 - ERROR - Error en descarga: [0;31mERROR:[0m unable to download video data: HTTP Error 403: Forbidden
+2025-12-09 18:15:59,093 - ERROR - Error en descarga: [0;31mERROR:[0m unable to download video data: HTTP Error 403: Forbidden
+2025-12-09 18:19:04,144 - INFO - Descarga completada: https://www.youtube.com/watch?v=TrlJM2f3SW4
