@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "YouFreeDownlader"
-include(":app")
+rootProject.name = "YourFreeDownloader"
+include(":mobile-android")

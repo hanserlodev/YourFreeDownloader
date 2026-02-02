@@ -1,0 +1,104 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║          YouTube Downloader v2.0 - by HanserlodXP                ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+📥 DESCARGADOR DE YOUTUBE CON INTERFAZ MODERNA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ CARACTERÍSTICAS:
+  • Interfaz moderna con tema oscuro/claro
+  • Descarga videos en diferentes calidades (Solo MP4)
+  • Extracción de audio a MP3
+  • Barra de progreso en tiempo real
+  • Caché de información de videos
+  • Descargas simultáneas (hasta 3)
+  • Configuración persistente
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📂 ARCHIVOS DE LA APLICACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+YouTubeDownloader.exe              ← Ejecutable principal
+YouTubeDownloader_Data/            ← Carpeta de datos (se crea automáticamente)
+  ├─ config.json                   ← Configuración (NO borrar)
+  └─ descargador.log               ← Registro de actividad
+
+⚠️ IMPORTANTE:
+  • NO borres la carpeta YouTubeDownloader_Data
+  • Contiene tu configuración y historial
+  • Se crea automáticamente al ejecutar el programa
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔧 REQUISITOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OBLIGATORIOS:
+  ✅ Windows 7/8/10/11
+  ✅ Conexión a Internet
+
+INCLUIDO EN EL EJECUTABLE:
+  ✅ FFmpeg - ¡Ya integrado! No requiere instalación adicional
+     (Para conversión a MP3 y merge de video+audio)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📖 MODO DE USO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Ejecuta YouTubeDownloader.exe
+2. Pega una URL de YouTube
+3. Click en "Obtener Info"
+4. Selecciona la calidad deseada
+5. Elige carpeta de destino
+6. Click en "🚀 DESCARGAR"
+
+URLS SOPORTADAS:
+  • youtube.com/watch?v=...
+  • youtu.be/...
+  • youtube.com/shorts/...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌓 CARACTERÍSTICAS ESPECIALES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Cambio de tema (botón 🌓): Alterna entre modo oscuro y claro
+• Solo Audio (MP3): Marca el checkbox para extraer solo el audio
+• Formatos MP4: Solo muestra formatos MP4 (no WebM)
+• Caché inteligente: Si consultas el mismo video, la info se carga al instante
+• Log de actividad: Todo queda registrado en descargador.log
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ SOLUCIÓN DE PROBLEMAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ "No se pudo descargar"
+   → Verifica tu conexión a Internet
+   → Verifica que la URL sea válida
+   → Algunos videos pueden estar restringidos
+
+❌ "Error al guardar configuración"
+   → Verifica permisos de escritura en la carpeta
+   → Ejecuta como administrador si es necesario
+
+❌ El antivirus bloquea el .exe
+   → Es normal (falso positivo)
+   → Agrega una excepción en tu antivirus
+   → El programa es seguro y de código abierto
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 NOTAS LEGALES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Solo para uso personal y educativo
+• Respeta los derechos de autor y términos de servicio de YouTube
+• El autor no se responsabiliza por el mal uso de esta herramienta
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 ¡DISFRUTA!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Desarrollado con ❤️ por HanserlodXP
+Versión: 2.0
+Fecha: 11/11/2025
+

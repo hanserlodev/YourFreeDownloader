@@ -13,3 +13,41 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+.fake
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+
+# Logs adicionales
+*.log
+*.log.*
+
+# OS adicionales
+Thumbs.db
+
+# Configuración local
+config.local.json
+.env
+
+# IDEs adicionales
+.vscode/
+*.swp
+*.swo
+*~
+
+# FFmpeg
+ffmpeg-*/
+
+# Datos temporales
+YouTubeDownloader_Data/
+cache/
+tmp/
