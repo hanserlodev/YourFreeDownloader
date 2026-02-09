@@ -50,20 +50,32 @@ YourFreeDownloader/
 
 ### Para la Aplicación de Escritorio (Windows/Linux)
 
-#### Ejecutar desde código fuente:
+#### ⭐ Forma Más Fácil (Linux):
+```bash
+./start.sh
+```
+Este script automáticamente configura todo y ejecuta la aplicación.
+
+#### Métodos Alternativos:
+
+**Linux:**
 ```bash
 cd desktop-multiplatform
-pip install -r requirements.txt
-python src/yt-downlader.py
+./scripts/run-linux.sh    # Ejecutar directamente
+./scripts/build-linux.sh  # Compilar ejecutable
 ```
 
-#### O usar los scripts:
-- **Linux**: `./desktop-multiplatform/scripts/run-linux.sh`
-- **Windows**: `desktop-multiplatform\scripts\run-windows.bat`
+**Windows:**
+```batch
+cd desktop-multiplatform
+scripts\run-windows.bat    REM Ejecutar directamente
+scripts\build-windows.bat  REM Compilar ejecutable
+```
 
-#### Compilar ejecutable:
-- **Linux**: `./desktop-multiplatform/scripts/build-linux.sh`
-- **Windows**: `desktop-multiplatform\scripts\build-windows.bat`
+#### ⚠️ Importante para Linux:
+- **NO ejecutes:** `pip install customtkinter` directamente (causará errores en sistemas modernos)
+- **USA:** Los scripts proporcionados que manejan entornos virtuales automáticamente
+- **Ver:** [TROUBLESHOOTING_LINUX.md](desktop-multiplatform/TROUBLESHOOTING_LINUX.md) si tienes problemas
 
 ### Para la Aplicación Móvil Android
 
@@ -94,6 +106,10 @@ O abre el proyecto `mobile-android` en Android Studio.
 
 ### Aplicación de Escritorio
 - Python 3.8+
+- **Tk/Tcinter** (para interfaz gráfica en Linux)
+  - Arch: `sudo pacman -S tk`
+  - Ubuntu/Debian: `sudo apt install python3-tk`
+  - Fedora: `sudo dnf install python3-tkinter`
 - FFmpeg (opcional, para conversión de audio)
 - Conexión a Internet
 

@@ -7,19 +7,36 @@ echo "║     YouTube Downloader - Compilación para Linux                  ║"
 echo "╚═══════════════════════════════════════════════════════════════════╝"
 echo ""
 
+# Cambiar al directorio del script
+cd "$(dirname "$0")/.." || exit 1
+
 # Verificar si Python está instalado
 if ! command -v python3 &> /dev/null; then
     echo "❌ Python3 no está instalado. Por favor instala Python3 primero."
     exit 1
 fi
 
-# Verificar si pip está instalado
-if ! command -v pip3 &> /dev/null; then
-    echo "❌ pip3 no está instalado. Por favor instala pip3 primero."
+echo "✅ Python3 encontrado"
+
+# Verificar si Tk/Tcinter está instalado (requerido para GUI)
+echo "🔍 Verificando Tk/Tcinter..."
+if ! python3 -c "import tkinter" 2>/dev/null; then
+    echo ""
+    echo "❌ Tk/Tcinter no está instalado (requerido para la interfaz gráfica)"
+    echo ""
+    echo "📦 Instálalo según tu distribución:"
+    if command -v pacman &> /dev/null; then
+        echo "   sudo pacman -S tk"
+    elif command -v apt &> /dev/null; then
+        echo "   sudo apt install python3-tk"
+    elif command -v dnf &> /dev/null; then
+        echo "   sudo dnf install python3-tkinter"
+    fi
+    echo ""
     exit 1
 fi
 
-echo "✅ Python3 y pip3 encontrados"
+echo "✅ Tk/Tcinter encontrado"
 echo ""
 
 # Crear entorno virtual si no existe

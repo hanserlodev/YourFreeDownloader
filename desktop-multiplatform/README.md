@@ -29,11 +29,15 @@ Aplicación de escritorio multiplataforma para descargar videos y audio de YouTu
 
 ## 🔧 Requisitos
 
-### Obligatorios
+### Obligatorios del Sistema
 - Python 3.8 o superior
+- **Tk/Tcinter** (para interfaz gráfica)
+  - Arch: `sudo pacman -S tk`
+  - Ubuntu/Debian: `sudo apt install python3-tk`
+  - Fedora: `sudo dnf install python3-tkinter`
 - Conexión a Internet
 
-### Dependencias (se instalan automáticamente)
+### Dependencias Python (se instalan automáticamente)
 - `customtkinter` - Interfaz gráfica moderna
 - `yt-dlp` - Motor de descarga de YouTube
 - `pyinstaller` - Para compilar ejecutables (opcional)
@@ -41,33 +45,20 @@ Aplicación de escritorio multiplataforma para descargar videos y audio de YouTu
 ### Opcional
 - **FFmpeg** - Para conversión a MP3 y merge de video+audio
   - Windows: Se incluye en el ejecutable compilado
-  - Linux: `sudo apt install ffmpeg` (Ubuntu/Debian) o equivalente
+  - Linux: `sudo apt install ffmpeg` (Ubuntu/Debian), `sudo pacman -S ffmpeg` (Arch), etc.
 
 ## 📦 Instalación
 
-### Opción 1: Ejecutar desde código fuente
+### ⭐ Opción Recomendada: Usar Scripts Automáticos
 
-```bash
-# 1. Clonar o descargar el repositorio
-cd desktop-multiplatform
-
-# 2. (Opcional) Crear entorno virtual
-python3 -m venv venv
-source venv/bin/activate  # En Linux
-# o
-venv\Scripts\activate  # En Windows
-
-# 3. Instalar dependencias
-pip install -r requirements.txt
-
-# 4. Ejecutar la aplicación
-python src/yt-downlader.py
-```
-
-### Opción 2: Usar scripts de ejecución
+Los scripts manejan automáticamente los entornos virtuales y las dependencias.
 
 #### En Linux:
 ```bash
+# Desde la raíz del proyecto
+./start.sh
+
+# O desde desktop-multiplatform
 cd desktop-multiplatform
 ./scripts/run-linux.sh
 ```
@@ -76,6 +67,29 @@ cd desktop-multiplatform
 ```batch
 cd desktop-multiplatform
 scripts\run-windows.bat
+```
+
+> **💡 Nota para Linux:** En distribuciones modernas (Arch, Ubuntu 23.04+, Debian 12+), NO uses `pip install` directamente sin entorno virtual. Los scripts ya manejan esto correctamente.
+
+### Opción 2: Instalación Manual (Avanzado)
+
+```bash
+# 1. Ir al directorio
+cd desktop-multiplatform
+
+# 2. Crear entorno virtual (OBLIGATORIO en Linux moderno)
+python3 -m venv venv
+
+# 3. Activar entorno virtual
+source venv/bin/activate  # Linux
+# o
+venv\Scripts\activate     # Windows
+
+# 4. Instalar dependencias
+pip install -r requirements.txt
+
+# 5. Ejecutar la aplicación
+python src/yt-downlader.py
 ```
 
 ### Opción 3: Compilar ejecutable
@@ -129,24 +143,68 @@ desktop-multiplatform/
 
 ## 🔍 Solución de Problemas
 
-### Error: "FFmpeg not found"
-- **Linux**: Instala ffmpeg con tu gestor de paquetes
-  ```bash
-  sudo apt install ffmpeg         # Ubuntu/Debian
-  sudo dnf install ffmpeg         # Fedora
-  sudo pacman -S ffmpeg          # Arch
-  ```
-- **Windows**: FFmpeg está incluido en el ejecutable compilado
+### ❌ Error: "ModuleNotFoundError: No module named 'customtkinter'"
 
-### Error: "No module named 'customtkinter'"
+**Causa:** Intentaste ejecutar la app directamente con Python del sistema.
+
+**✅ Solución:**
 ```bash
-pip install -r requirements.txt
+# Usa los scripts proporcionados que manejan entornos virtuales:
+./scripts/run-linux.sh    # Linux
+# o
+scripts\run-windows.bat   # Windows
+```
+
+### ❌ Error: "externally-managed-environment" (Linux)
+
+**Causa:** Python 3.11+ en sistemas modernos previene instalación global de paquetes.
+
+**✅ Solución:** NO uses `pip install --break-system-packages`
+
+En su lugar, usa los scripts que automáticamente crean entornos virtuales:
+```bash
+./scripts/run-linux.sh
+```
+
+**📚 Para más detalles:** Ver [TROUBLESHOOTING_LINUX.md](TROUBLESHOOTING_LINUX.md)
+
+### Error: "FFmpeg not found"
+
+**Linux:** Instala ffmpeg con tu gestor de paquetes
+```bash
+sudo apt install ffmpeg         # Ubuntu/Debian
+sudo dnf install ffmpeg         # Fedora
+sudo pacman -S ffmpeg          # Arch
+```
+
+**Windows:** FFmpeg está incluido en el ejecutable compilado
+
+### Error: "No module named 'venv'"
+
+**Ubuntu/Debian:**
+```bash
+sudo apt install python3-venv
+```
+
+**Fedora:**
+```bash
+sudo dnf install python3-virtualenv
 ```
 
 ### La descarga falla constantemente
+
 - Verifica tu conexión a Internet
 - Asegúrate de que la URL de YouTube sea válida
-- Actualiza yt-dlp: `pip install --upgrade yt-dlp`
+- Actualiza yt-dlp dentro del entorno virtual:
+  ```bash
+  source venv/bin/activate
+  pip install --upgrade yt-dlp
+  ```
+
+### 📚 Guía Completa de Problemas
+
+Para una guía detallada de solución de problemas en Linux, consulta:
+**[TROUBLESHOOTING_LINUX.md](TROUBLESHOOTING_LINUX.md)**
 
 ## 🤝 Contribuciones
 
