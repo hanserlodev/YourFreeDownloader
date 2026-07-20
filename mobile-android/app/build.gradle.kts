@@ -1,5 +1,3 @@
-import org.apache.tools.ant.util.JavaEnvUtils.VERSION_11
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -11,7 +9,7 @@ android {
     namespace = "com.hanserlod.youfreedownlader"
     compileSdk = 36
 
-defaultConfig {
+    defaultConfig {
         applicationId = "com.hanserlod.youfreedownlader"
         minSdk = 24
         targetSdk = 36
@@ -22,9 +20,6 @@ defaultConfig {
         ndk {
             abiFilters += listOf("arm64-v8a", "x86_64")
         }
-
-        vectorDrawables.useSupportLibrary = true
-    }
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -84,7 +79,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.test)
 
-    // ViewModel
+    // ViewModel & LiveData
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
 

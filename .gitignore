@@ -15,6 +15,7 @@
 local.properties
 
 .fake
+
 # Python
 __pycache__/
 *.py[cod]
@@ -26,19 +27,22 @@ env/
 ENV/
 *.egg-info/
 dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Logs adicionales
+# Logs
 *.log
 *.log.*
 
-# OS adicionales
+# OS
 Thumbs.db
 
 # Configuración local
 config.local.json
 .env
 
-# IDEs adicionales
+# IDEs
 .vscode/
 *.swp
 *.swo
@@ -51,3 +55,21 @@ ffmpeg-*/
 YouTubeDownloader_Data/
 cache/
 tmp/
+
+# Android
+mobile-android/build/
+mobile-android/.gradle/
+mobile-android/local.properties
+mobile-android/.idea/
+mobile-android/*.iml
+
+# Desktop
+desktop-multiplatform/build/
+desktop-multiplatform/dist/
+desktop-multiplatform/venv/
+desktop-multiplatform/*.log
+
+# Shared
+shared/build/
+shared/dist/
+shared/*.egg-info/

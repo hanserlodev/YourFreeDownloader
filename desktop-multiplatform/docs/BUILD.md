@@ -38,7 +38,6 @@ pyinstaller \
   --name "YourFreeDownloader" \
   --onefile \
   --windowed \
-  --icon="resources/icon.ico" \
   --add-data "../../shared/ytdlp_core:ytdlp_core" \
   --collect-all ytdlp_core \
   --collect-all yt_dlp \

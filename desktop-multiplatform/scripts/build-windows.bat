@@ -33,7 +33,6 @@ pyinstaller ^
     --name "YourFreeDownloader" ^
     --onefile ^
     --windowed ^
-    --icon="%DESKTOP_DIR%\resources\icon.ico" ^
     --add-data "%PROJECT_ROOT%\shared\ytdlp_core;ytdlp_core" ^
     --collect-all ytdlp_core ^
     --collect-all yt_dlp ^

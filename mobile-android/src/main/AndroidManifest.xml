@@ -17,10 +17,6 @@
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <!-- Foreground service for downloads -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-
     <application
         android:name=".YourFreeDownloaderApplication"
         android:allowBackup="true"
@@ -54,12 +50,6 @@
                 <data android:scheme="https" android:host="www.youtube.com" android:pathPrefix="/shorts" />
             </intent-filter>
         </activity>
-
-        <!-- Foreground service for background downloads -->
-        <service
-            android:name=".DownloadForegroundService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
 
     </application>
 </manifest>
