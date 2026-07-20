@@ -14,13 +14,15 @@ def obtener_formatos(url):
             ext = f.get('ext', 'unknown')
             vcodec = f.get('vcodec', 'none')
             acodec = f.get('acodec', 'none')
+            abr = f.get('abr', 'N/A')
+            filesize = f.get('filesize', 0)
+            size_mb = f"{filesize // (1024*1024)}MB" if filesize else "?"
             if vcodec != 'none' or acodec != 'none':
-                format_list.append((itag, f"{itag} - {res}p - {ext}"))
-        return format_list  # Devuelve lista de tuplas (id, descripción)
+                format_list.append((itag, f"{itag} - {res}p - {ext} ({size_mb})"))
+        return format_list
 
 
 def descargar_video(url, output_path, format_id, solo_audio=False):
-    # Combinar video+audio para formatos de video
     format_string = f"{format_id}+bestaudio/best" if not solo_audio else format_id
 
     ydl_opts = {
@@ -51,7 +53,6 @@ def descargar_video(url, output_path, format_id, solo_audio=False):
 
 
 def progress_hook(d):
-
     if d['status'] == 'downloading':
         downloaded = d.get('downloaded_bytes', 0)
         total = d.get('total_bytes', 1)

@@ -1,80 +1,53 @@
 #!/bin/bash
-# Script de compilación para Linux
-# YouTube Downloader - Versión Multiplataforma
+# Build script for Linux
 
-echo "╔═══════════════════════════════════════════════════════════════════╗"
-echo "║     YouTube Downloader - Compilación para Linux                  ║"
-echo "╚═══════════════════════════════════════════════════════════════════╝"
-echo ""
+set -e
 
-# Cambiar al directorio del script
-cd "$(dirname "$0")/.." || exit 1
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+DESKTOP_DIR="$PROJECT_ROOT/desktop-multiplatform"
+BUILD_DIR="$DESKTOP_DIR/build"
+DIST_DIR="$DESKTOP_DIR/dist"
 
-# Verificar si Python está instalado
-if ! command -v python3 &> /dev/null; then
-    echo "❌ Python3 no está instalado. Por favor instala Python3 primero."
-    exit 1
+echo "Building YourFreeDownloader for Linux..."
+
+# Clean previous builds
+rm -rf "$BUILD_DIR" "$DIST_DIR"
+
+# Create virtual environment if not exists
+if [ ! -d "$DESKTOP_DIR/venv" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv "$DESKTOP_DIR/venv"
 fi
 
-echo "✅ Python3 encontrado"
-
-# Verificar si Tk/Tcinter está instalado (requerido para GUI)
-echo "🔍 Verificando Tk/Tcinter..."
-if ! python3 -c "import tkinter" 2>/dev/null; then
-    echo ""
-    echo "❌ Tk/Tcinter no está instalado (requerido para la interfaz gráfica)"
-    echo ""
-    echo "📦 Instálalo según tu distribución:"
-    if command -v pacman &> /dev/null; then
-        echo "   sudo pacman -S tk"
-    elif command -v apt &> /dev/null; then
-        echo "   sudo apt install python3-tk"
-    elif command -v dnf &> /dev/null; then
-        echo "   sudo dnf install python3-tkinter"
-    fi
-    echo ""
-    exit 1
-fi
-
-echo "✅ Tk/Tcinter encontrado"
-echo ""
-
-# Crear entorno virtual si no existe
-if [ ! -d "venv" ]; then
-    echo "📦 Creando entorno virtual..."
-    python3 -m venv venv
-    echo "✅ Entorno virtual creado"
-else
-    echo "✅ Entorno virtual ya existe"
-fi
-
-# Activar entorno virtual
-echo "🔄 Activando entorno virtual..."
-source venv/bin/activate
-
-# Instalar dependencias
-echo "📥 Instalando dependencias..."
+# Activate venv and install dependencies
+source "$DESKTOP_DIR/venv/bin/activate"
 pip install --upgrade pip
-pip install customtkinter yt-dlp pyinstaller
+pip install -r "$DESKTOP_DIR/requirements.txt"
+pip install pyinstaller
 
-# Compilar la aplicación
-echo ""
-echo "🔨 Compilando aplicación..."
-pyinstaller --clean --noconfirm ../config/YouTubeDownloader.spec
+# Install shared library in development mode
+pip install -e "$PROJECT_ROOT/shared"
 
-if [ $? -eq 0 ]; then
-    echo ""
-    echo "╔═══════════════════════════════════════════════════════════════════╗"
-    echo "║                   ✅ COMPILACIÓN EXITOSA                          ║"
-    echo "╚═══════════════════════════════════════════════════════════════════╝"
-    echo ""
-    echo "📂 El ejecutable se encuentra en: build/dist/"
-    echo "🚀 Para ejecutar: ./build/dist/YouTubeDownloader/YouTubeDownloader"
-else
-    echo ""
-    echo "❌ Error durante la compilación"
-    exit 1
-fi
+# Run PyInstaller
+cd "$DESKTOP_DIR"
+pyinstaller \
+    --name "YourFreeDownloader" \
+    --onefile \
+    --windowed \
+    --icon="$DESKTOP_DIR/resources/icon.ico" \
+    --add-data "$PROJECT_ROOT/shared/ytdlp_core:ytdlp_core" \
+    --collect-all ytdlp_core \
+    --collect-all yt_dlp \
+    --collect-all customtkinter \
+    --collect-all dependency_injector \
+    --hidden-import ytdlp_core \
+    --hidden-import ytdlp_core.core \
+    --hidden-import ytdlp_core.domain \
+    --hidden-import ytdlp_core.application \
+    --hidden-import ytdlp_core.infrastructure \
+    --hidden-import yt_dlp \
+    --hidden-import customtkinter \
+    --hidden-import dependency_injector \
+    src/ytdlp_desktop/__main__.py
 
-# Desactivar entorno virtual
-deactivate
+echo "Build complete! Executable at: $DIST_DIR/YourFreeDownloader"

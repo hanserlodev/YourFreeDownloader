@@ -1,127 +1,112 @@
-# YourFreeDownloader - Aplicación Móvil Android
+# YourFreeDownloader - Android
 
-![Platform](https://img.shields.io/badge/platform-Android-green)
-![MinSDK](https://img.shields.io/badge/minSdk-24-blue)
-![TargetSDK](https://img.shields.io/badge/targetSdk-36-blue)
+App nativa Android para descargar video y audio de YouTube.
 
-## 📖 Descripción
+## Características
 
-Aplicación móvil Android para descargar videos y audio de YouTube directamente en tu dispositivo.
+- UI Material 3 con Jetpack Compose
+- ViewModel + StateFlow + corrutinas
+- Scoped Storage (API 29+) con fallback MediaStore
+- Foreground Service para descargas en background
+- Intent filters para URLs de YouTube (watch, shorts, youtu.be)
+- Backend Python vía Chaquopy (yt-dlp + ffmpeg-python)
 
-## ✨ Características
+## Requisitos de desarrollo
 
-- 📥 Descarga de videos de YouTube
-- 🎵 Extracción de audio
-- 📱 Interfaz nativa Android
-- 🔄 Integración con Python backend
-- 💾 Gestión de descargas
-
-## 🔧 Requisitos de Desarrollo
-
-- Android Studio Arctic Fox o superior
+- Android Studio (Arctic Fox+)
 - JDK 11
-- Gradle 7.0+
-- Android SDK API 36
-- Chaquopy Plugin (para integración con Python)
+- Android SDK 36
+- Gradle 8.x (incluido via wrapper)
 
-## 📦 Configuración del Proyecto
+## Build
 
-1. **Abrir el proyecto**:
-   ```bash
-   cd mobile-android
-   ```
-
-2. **Sincronizar Gradle**:
-   - Abre Android Studio
-   - File → Open → Selecciona la carpeta `mobile-android`
-   - Espera a que Gradle sincronice
-
-3. **Configurar SDK**:
-   - Tools → SDK Manager
-   - Asegúrate de tener Android SDK 36 instalado
-
-## 🏗️ Compilar la Aplicación
-
-### Desde Android Studio:
-1. Build → Build Bundle(s) / APK(s) → Build APK(s)
-2. El APK estará en `mobile-android/build/outputs/apk/`
-
-### Desde línea de comandos:
 ```bash
 cd mobile-android
-./gradlew assembleDebug       # Para versión debug
-./gradlew assembleRelease     # Para versión release
+
+# Debug APK
+./gradlew assembleDebug
+
+# Release AAB (para Play Store)
+./gradlew bundleRelease
+
+# Tests
+./gradlew test
+./gradlew connectedAndroidTest  # requiere emulador/dispositivo
 ```
 
-## 📂 Estructura del Proyecto
+## Estructura
 
 ```
 mobile-android/
-├── build.gradle.kts           # Configuración Gradle del módulo
-├── proguard-rules.pro         # Reglas ProGuard
-└── src/
-    ├── main/
-    │   ├── AndroidManifest.xml
-    │   ├── java/com/hanserlod/  # Código Java/Kotlin
-    │   ├── python/              # Scripts Python (Chaquopy)
-    │   │   └── hanserlod.py
-    │   └── res/                 # Recursos Android
-    │       ├── drawable/
-    │       ├── layout/
-    │       ├── mipmap-*/
-    │       ├── values/
-    │       └── xml/
-    ├── androidTest/             # Tests instrumentados
-    └── test/                    # Tests unitarios
+├── src/main/
+│   ├── java/com/hanserlod/youfreedownlader/
+│   │   ├── MainActivity.kt                    # Compose entry point
+│   │   ├── YourFreeDownloaderApplication.kt   # Inicializa Chaquopy
+│   │   ├── data/                              # Repositories (futuro)
+│   │   ├── domain/model/DownloadModels.kt     # VideoInfo, VideoFormat, DownloadProgress, DownloadTask
+│   │   ├── ui/
+│   │   │   ├── screen/DownloadScreen.kt       # Compose UI completo
+│   │   │   ├── viewmodel/DownloadViewModel.kt # Estado + Python bridge
+│   │   │   └── theme/                         # Material3 Theme + Typography
+│   │   └── util/
+│   ├── python/hanserlod.py                    # Chaquopy bridge (yt-dlp)
+│   └── res/                                   # Resources
+├── build.gradle.kts                           # Compose + Chaquopy config
+├── gradle/libs.versions.toml                  # Version catalog
+├── gradlew / settings.gradle.kts              # Standalone Gradle project
+└── proguard-rules.pro
 ```
 
-## 🚀 Ejecutar en Dispositivo/Emulador
+## Permisos y almacenamiento
 
-1. Conecta un dispositivo Android o inicia un emulador
-2. En Android Studio: Run → Run 'app'
-3. O desde terminal:
-   ```bash
-   ./gradlew installDebug
-   ```
+| API | Permiso | Uso |
+|-----|---------|-----|
+| Todas | `INTERNET` | Descargas yt-dlp |
+| 29-32 | `READ_EXTERNAL_STORAGE` / `WRITE_EXTERNAL_STORAGE` | `maxSdkVersion=28`/`32` |
+| 33+ | `READ_MEDIA_VIDEO` / `READ_MEDIA_AUDIO` | MediaStore acceso |
+| Todas | `FOREGROUND_SERVICE` + `FOREGROUND_SERVICE_DATA_SYNC` | Background downloads |
 
-## 🔍 Características Técnicas
+La app usa `Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS)` para API < 29 y MediaStore para API 29+. No requiere permisos de almacenamiento en runtime en Android 11+ gracias a Scoped Storage.
 
-- **Lenguaje**: Kotlin + Java
-- **Min SDK**: Android 7.0 (API 24)
-- **Target SDK**: Android 15 (API 36)
-- **Arquitectura**: ARM64-v8a, x86_64
-- **Backend**: Python (vía Chaquopy)
+## Python Bridge (Chaquopy)
 
-## 📝 Notas de Desarrollo
+`src/main/python/hanserlod.py` expone:
 
-- El proyecto utiliza **Chaquopy** para ejecutar código Python en Android
-- Los scripts Python están en `src/main/python/`
-- Se requiere configuración especial de ProGuard para el release
+```python
+def obtener_formatos(url) -> List[Tuple[format_id, description]]:
+    # Retorna lista de (itag, "itag - 720p - mp4 (25MB)")
 
-## 🐛 Solución de Problemas
+def descargar_video(url, output_path, format_id, solo_audio=False):
+    # Descarga con progress_hook
+```
 
-### Error: "SDK not found"
-- Configura `ANDROID_HOME` en tus variables de entorno
-- O configura el SDK en Android Studio
+## Configuración Gradle
 
-### Error de compilación de Gradle
+`build.gradle.kts` incluye:
+- Compose BOM 2024.08.00
+- Kotlin 2.0.0 + Compose compiler 1.5.11
+- Chaquopy 16.1.0 con Python 3.11
+- yt-dlp + ffmpeg-python como dependencias pip
+- ViewModel Compose, Navigation, Coil, Coroutines
+
+## ProGuard/R8
+
+`proguard-rules.pro` mantiene:
+- Clases Chaquopy (`com.chaquo.python.**`)
+- yt-dlp, ffmpeg-python
+- App classes (`com.hanserlod.youfreedownlader.**`)
+- Kotlin coroutines, Compose runtime, Lifecycle, Activity Result, Coil
+
+## Testing
+
 ```bash
-./gradlew clean
-./gradlew build --refresh-dependencies
+# Unit tests (JUnit)
+./gradlew test
+
+# Instrumented tests (requiere emulador/dispositivo)
+./gradlew connectedAndroidTest
 ```
 
-### Error con Chaquopy
-- Verifica que el plugin esté correctamente configurado en `build.gradle.kts`
-- Asegúrate de tener las dependencias de Python especificadas
+## Licencia
 
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT.
-
-## 👤 Autor
-
-**HanserlodXP**
-
----
-
-📱 Desarrollado con ❤️ para Android
+MIT

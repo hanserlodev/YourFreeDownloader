@@ -1,0 +1,1 @@
+"""Shared yt-dlp core domain models and interfaces."""

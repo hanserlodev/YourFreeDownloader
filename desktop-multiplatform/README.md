@@ -1,234 +1,130 @@
-# YouTube Downloader - Aplicación de Escritorio Multiplataforma
+# YourFreeDownloader - Desktop
 
-![Version](https://img.shields.io/badge/version-2.0-blue)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey)
-![Python](https://img.shields.io/badge/python-3.8%2B-green)
+Aplicación de escritorio para descargar video y audio de YouTube. Windows y Linux.
 
-## 📖 Descripción
+## Características
 
-Aplicación de escritorio multiplataforma para descargar videos y audio de YouTube con una interfaz gráfica moderna y amigable.
+- Interfaz CustomTkinter con tema oscuro/claro
+- Descarga video (múltiples calidades MP4) y audio (MP3)
+- Progreso en tiempo real: velocidad, ETA, bytes descargados
+- Configuración persistente (JSON)
+- Detección automática de FFmpeg (incluido en ejecutable Windows)
+- Descargas concurrentes (3 workers)
 
-## ✨ Características
+## Requisitos
 
-- 🎨 **Interfaz moderna** con CustomTkinter
-- 🌓 **Tema oscuro/claro** intercambiable
-- 📥 **Descarga de videos** en diferentes calidades (MP4)
-- 🎵 **Extracción de audio** en formato MP3
-- 📊 **Barra de progreso** en tiempo real
-- 📁 **Selección de carpeta** de destino personalizada
-- 📝 **Log de descarga** detallado
-- 🔍 **Detección automática** de ffmpeg
-- ✅ **Validación** de URLs de YouTube
-- 💾 **Configuración persistente**
-- 🚀 **Descargas simultáneas** (hasta 3)
-
-## 🖥️ Plataformas Soportadas
-
-- ✅ Windows 7/8/10/11
-- ✅ Linux (Ubuntu, Debian, Fedora, Arch, etc.)
-
-## 🔧 Requisitos
-
-### Obligatorios del Sistema
-- Python 3.8 o superior
-- **Tk/Tcinter** (para interfaz gráfica)
+**Sistema**
+- Python 3.8+
+- Tk/Tkinter
   - Arch: `sudo pacman -S tk`
   - Ubuntu/Debian: `sudo apt install python3-tk`
   - Fedora: `sudo dnf install python3-tkinter`
-- Conexión a Internet
+- FFmpeg (opcional, para MP3 y merge HQ)
+  - Arch: `sudo pacman -S ffmpeg`
+  - Ubuntu/Debian: `sudo apt install ffmpeg`
+  - Fedora: `sudo dnf install ffmpeg`
 
-### Dependencias Python (se instalan automáticamente)
-- `customtkinter` - Interfaz gráfica moderna
-- `yt-dlp` - Motor de descarga de YouTube
-- `pyinstaller` - Para compilar ejecutables (opcional)
+**Python** (se instalan automáticamente)
+- customtkinter
+- yt-dlp
+- pyinstaller (para compilar)
 
-### Opcional
-- **FFmpeg** - Para conversión a MP3 y merge de video+audio
-  - Windows: Se incluye en el ejecutable compilado
-  - Linux: `sudo apt install ffmpeg` (Ubuntu/Debian), `sudo pacman -S ffmpeg` (Arch), etc.
+## Instalación
 
-## 📦 Instalación
+### Opción 1: Scripts automáticos (recomendado)
 
-### ⭐ Opción Recomendada: Usar Scripts Automáticos
+Manejan entorno virtual y dependencias.
 
-Los scripts manejan automáticamente los entornos virtuales y las dependencias.
-
-#### En Linux:
 ```bash
-# Desde la raíz del proyecto
+# Desde raíz del proyecto
 ./start.sh
 
 # O desde desktop-multiplatform
 cd desktop-multiplatform
-./scripts/run-linux.sh
+./scripts/run-linux.sh        # Linux
+scripts\run-windows.bat       # Windows
 ```
 
-#### En Windows:
-```batch
-cd desktop-multiplatform
-scripts\run-windows.bat
-```
+> **Linux moderno (Arch, Ubuntu 23.04+, Debian 12+)**: No uses `pip install` global. Los scripts crean venv automáticamente (PEP 668).
 
-> **💡 Nota para Linux:** En distribuciones modernas (Arch, Ubuntu 23.04+, Debian 12+), NO uses `pip install` directamente sin entorno virtual. Los scripts ya manejan esto correctamente.
-
-### Opción 2: Instalación Manual (Avanzado)
+### Opción 2: Manual
 
 ```bash
-# 1. Ir al directorio
 cd desktop-multiplatform
-
-# 2. Crear entorno virtual (OBLIGATORIO en Linux moderno)
 python3 -m venv venv
-
-# 3. Activar entorno virtual
-source venv/bin/activate  # Linux
-# o
-venv\Scripts\activate     # Windows
-
-# 4. Instalar dependencias
+source venv/bin/activate      # Linux
+# venv\Scripts\activate       # Windows
 pip install -r requirements.txt
-
-# 5. Ejecutar la aplicación
 python src/yt-downlader.py
 ```
 
 ### Opción 3: Compilar ejecutable
 
-#### En Linux:
 ```bash
+# Linux
 cd desktop-multiplatform/scripts
 ./build-linux.sh
-```
 
-#### En Windows:
-```batch
+# Windows
 cd desktop-multiplatform\scripts
 build-windows.bat
 ```
 
-El ejecutable compilado estará en `build/dist/YouTubeDownloader/`
+Ejecutable en `desktop-multiplatform/dist/YourFreeDownloader`
 
-## 📖 Modo de Uso
+## Uso
 
-1. **Ejecuta la aplicación** usando cualquiera de los métodos anteriores
-2. **Pega una URL** de YouTube en el campo de entrada
-3. **Selecciona el formato**:
-   - Video: Elige la calidad deseada (360p, 720p, 1080p, etc.)
-   - Audio: Solo MP3
-4. **Elige la carpeta** de destino (opcional)
-5. **Haz clic en Descargar** y espera a que termine
+1. Ejecuta la app
+2. Pega URL de YouTube
+3. Selecciona formato: video (calidad) o audio (MP3)
+4. Elige carpeta destino (opcional)
+5. Descargar
 
-## 📂 Estructura del Proyecto
+## Estructura
 
 ```
 desktop-multiplatform/
-├── src/
-│   └── yt-downlader.py          # Código fuente principal
-├── config/
-│   ├── config.json              # Configuración de la app
-│   └── YouTubeDownloader.spec   # Configuración PyInstaller
-├── scripts/
-│   ├── build-linux.sh           # Script de compilación Linux
-│   ├── build-windows.bat        # Script de compilación Windows
-│   ├── run-linux.sh             # Script de ejecución Linux
-│   └── run-windows.bat          # Script de ejecución Windows
-├── docs/
-│   ├── LEEME.txt                # Documentación en español
-│   ├── INSTRUCCIONES_*.md       # Instrucciones detalladas
-│   └── README_COMPILACION.md    # Guía de compilación
-├── resources/                   # Recursos (iconos, imágenes)
-├── build/                       # Archivos de compilación
-└── requirements.txt             # Dependencias Python
+├── src/ytdlp_desktop/     # Código refactorizado (Clean Architecture)
+│   ├── __main__.py        # Entry point
+│   ├── config/            # AppConfig, ConfigManager
+│   ├── data/services.py   # DI Container
+│   ├── di/container.py    # dependency-injector wiring
+│   ├── domain/models.py   # AppConfig, DownloadTask, VideoInfoDisplay
+│   ├── platform/          # DesktopPlatformService
+│   ├── ui/main_window.py  # CustomTkinter UI
+│   └── utils/logger.py
+├── scripts/               # build/run scripts
+├── pyproject.toml         # Build config + deps
+├── requirements.txt
+└── tests/
 ```
 
-## 🔍 Solución de Problemas
+## Troubleshooting Linux
 
-### ❌ Error: "ModuleNotFoundError: No module named 'customtkinter'"
+Ver [TROUBLESHOOTING_LINUX.md](TROUBLESHOOTING_LINUX.md) para detalles.
 
-**Causa:** Intentaste ejecutar la app directamente con Python del sistema.
+Errores comunes:
 
-**✅ Solución:**
+| Error | Solución |
+|-------|----------|
+| `ModuleNotFoundError: customtkinter` | Usa `./scripts/run-linux.sh` (crea venv) |
+| `externally-managed-environment` | No uses pip global. Usa los scripts o venv manual |
+| `libtk8.6.so not found` | Instala tk: `sudo pacman -S tk` / `sudo apt install python3-tk` |
+| `No module named venv` | `sudo apt install python3-venv` / `sudo dnf install python3-virtualenv` |
+| FFmpeg not found | `sudo pacman -S ffmpeg` / `sudo apt install ffmpeg` |
+
+## Tests y lint
+
 ```bash
-# Usa los scripts proporcionados que manejan entornos virtuales:
-./scripts/run-linux.sh    # Linux
-# o
-scripts\run-windows.bat   # Windows
+cd desktop-multiplatform
+pip install -e ../shared[dev]
+pip install pytest pytest-qt ruff black mypy
+ruff check src/
+black --check src/
+mypy src/
+pytest -v
 ```
 
-### ❌ Error: "externally-managed-environment" (Linux)
+## Licencia
 
-**Causa:** Python 3.11+ en sistemas modernos previene instalación global de paquetes.
-
-**✅ Solución:** NO uses `pip install --break-system-packages`
-
-En su lugar, usa los scripts que automáticamente crean entornos virtuales:
-```bash
-./scripts/run-linux.sh
-```
-
-**📚 Para más detalles:** Ver [TROUBLESHOOTING_LINUX.md](TROUBLESHOOTING_LINUX.md)
-
-### Error: "FFmpeg not found"
-
-**Linux:** Instala ffmpeg con tu gestor de paquetes
-```bash
-sudo apt install ffmpeg         # Ubuntu/Debian
-sudo dnf install ffmpeg         # Fedora
-sudo pacman -S ffmpeg          # Arch
-```
-
-**Windows:** FFmpeg está incluido en el ejecutable compilado
-
-### Error: "No module named 'venv'"
-
-**Ubuntu/Debian:**
-```bash
-sudo apt install python3-venv
-```
-
-**Fedora:**
-```bash
-sudo dnf install python3-virtualenv
-```
-
-### La descarga falla constantemente
-
-- Verifica tu conexión a Internet
-- Asegúrate de que la URL de YouTube sea válida
-- Actualiza yt-dlp dentro del entorno virtual:
-  ```bash
-  source venv/bin/activate
-  pip install --upgrade yt-dlp
-  ```
-
-### 📚 Guía Completa de Problemas
-
-Para una guía detallada de solución de problemas en Linux, consulta:
-**[TROUBLESHOOTING_LINUX.md](TROUBLESHOOTING_LINUX.md)**
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver archivo LICENSE para más detalles.
-
-## 👤 Autor
-
-**HanserlodXP**
-
-## 🙏 Agradecimientos
-
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) - Motor de descarga
-- [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) - Framework de UI
-- [FFmpeg](https://ffmpeg.org/) - Procesamiento de multimedia
-
----
-
-⭐ Si te gusta este proyecto, ¡dale una estrella en GitHub!
+MIT

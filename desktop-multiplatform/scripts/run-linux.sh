@@ -1,92 +1,35 @@
 #!/bin/bash
-# Script para ejecutar la aplicación en Linux
+# Run script for Linux
 
-echo "╔═══════════════════════════════════════════════════════════════════╗"
-echo "║           YouTube Downloader - Ejecutando                         ║"
-echo "╚═══════════════════════════════════════════════════════════════════╝"
-echo ""
+set -e
 
-# Cambiar al directorio del script
-cd "$(dirname "$0")/.." || exit 1
+DESKTOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VENV_DIR="$DESKTOP_DIR/venv"
 
-# Verificar si Python está instalado
-if ! command -v python3 &> /dev/null; then
-    echo "❌ Python3 no está instalado. Por favor instala Python3 primero."
-    exit 1
+echo "Starting YourFreeDownloader..."
+
+# Create virtual environment if not exists
+if [ ! -d "$VENV_DIR" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv "$VENV_DIR"
 fi
 
-# Verificar si Tk/Tcinter está instalado (requerido para GUI)
-echo "🔍 Verificando Tk/Tcinter..."
+# Activate venv
+source "$VENV_DIR/bin/activate"
+
+# Install/update dependencies
+pip install --upgrade pip > /dev/null 2>&1
+pip install -r "$DESKTOP_DIR/requirements.txt" > /dev/null 2>&1
+
+# Install shared library
+pip install -e "$(dirname "$DESKTOP_DIR")/shared" > /dev/null 2>&1
+
+# Check for tkinter
 if ! python3 -c "import tkinter" 2>/dev/null; then
-    echo ""
-    echo "❌ Tk/Tcinter no está instalado (requerido para la interfaz gráfica)"
-    echo ""
-    echo "📦 Instálalo según tu distribución:"
-    if command -v pacman &> /dev/null; then
-        echo "   sudo pacman -S tk"
-    elif command -v apt &> /dev/null; then
-        echo "   sudo apt install python3-tk"
-    elif command -v dnf &> /dev/null; then
-        echo "   sudo dnf install python3-tkinter"
-    else
-        echo "   Busca el paquete 'tk' o 'python-tk' en tu gestor de paquetes"
-    fi
-    echo ""
+    echo "Error: tkinter not installed. Install python3-tk (Debian/Ubuntu) or tk (Arch/Fedora)"
     exit 1
 fi
 
-echo "✅ Tk/Tcinter encontrado"
-echo ""
-
-# Crear entorno virtual si no existe
-if [ ! -d "venv" ]; then
-    echo "📦 Entorno virtual no encontrado. Creando..."
-    python3 -m venv venv
-    
-    if [ $? -ne 0 ]; then
-        echo "❌ Error al crear el entorno virtual."
-        echo "   Asegúrate de tener python3-venv instalado:"
-        echo "   - Ubuntu/Debian: sudo apt install python3-venv"
-        echo "   - Arch: python viene con venv incluido"
-        echo "   - Fedora: sudo dnf install python3-virtualenv"
-        exit 1
-    fi
-    
-    echo "✅ Entorno virtual creado"
-    
-    # Activar entorno virtual
-    source venv/bin/activate
-    
-    # Instalar dependencias
-    echo "📥 Instalando dependencias..."
-    pip install --upgrade pip > /dev/null 2>&1
-    pip install -r requirements.txt
-    
-    if [ $? -ne 0 ]; then
-        echo "❌ Error al instalar dependencias"
-        deactivate
-        exit 1
-    fi
-    
-    echo "✅ Dependencias instaladas"
-else
-    # Activar entorno virtual existente
-    source venv/bin/activate
-    
-    # Verificar si las dependencias están instaladas
-    if ! python -c "import customtkinter" 2>/dev/null; then
-        echo "📥 Instalando dependencias faltantes..."
-        pip install --upgrade pip > /dev/null 2>&1
-        pip install -r requirements.txt
-    fi
-fi
-
-echo ""
-echo "🚀 Iniciando YouTube Downloader..."
-echo ""
-
-# Ejecutar la aplicación
-python src/yt-downlader.py
-
-# Desactivar entorno virtual
-deactivate
+# Run application
+cd "$DESKTOP_DIR"
+python -m ytdlp_desktop

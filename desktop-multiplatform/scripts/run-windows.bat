@@ -1,19 +1,27 @@
 @echo off
-REM Script para ejecutar la aplicación en Windows
+REM Run script for Windows
 
-echo 🚀 Iniciando YouTube Downloader...
+set DESKTOP_DIR=%~dp0..
+set VENV_DIR=%DESKTOP_DIR%\venv
 
-REM Activar entorno virtual si existe
-if exist "venv\" (
-    call venv\Scripts\activate.bat
+echo Starting YourFreeDownloader...
+
+REM Create virtual environment if not exists
+if not exist "%VENV_DIR%" (
+    echo Creating virtual environment...
+    python -m venv "%VENV_DIR%"
 )
 
-REM Ejecutar la aplicación
-python src\yt-downlader.py
+REM Activate venv
+call "%VENV_DIR%\Scripts\activate.bat"
 
-REM Desactivar entorno virtual
-if exist "venv\" (
-    call venv\Scripts\deactivate.bat
-)
+REM Install/update dependencies
+python -m pip install --upgrade pip >nul 2>&1
+pip install -r "%DESKTOP_DIR%\requirements.txt" >nul 2>&1
 
-pause
+REM Install shared library
+pip install -e "%DESKTOP_DIR%\..\shared" >nul 2>&1
+
+REM Run application
+cd /d "%DESKTOP_DIR%"
+python -m ytdlp_desktop

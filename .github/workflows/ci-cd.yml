@@ -1,0 +1,188 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Shared library tests
+  shared:
+    name: Shared Library
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          cd shared
+          pip install -e .[dev]
+      - name: Lint (ruff)
+        run: |
+          cd shared
+          ruff check ytdlp_core
+      - name: Format check (black)
+        run: |
+          cd shared
+          black --check ytdlp_core
+      - name: Type check (mypy)
+        run: |
+          cd shared
+          mypy ytdlp_core
+      - name: Tests (pytest)
+        run: |
+          cd shared
+          pytest -v --cov=ytdlp_core --cov-report=xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./shared/coverage.xml
+
+  # Desktop app build & test
+  desktop:
+    name: Desktop App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk ffmpeg
+      - name: Install shared library
+        run: |
+          pip install -e ./shared
+      - name: Install desktop dependencies
+        run: |
+          cd desktop-multiplatform
+          pip install -r requirements.txt
+          pip install pytest-qt
+      - name: Lint (ruff)
+        run: |
+          cd desktop-multiplatform
+          ruff check src/ytdlp_desktop
+      - name: Format check (black)
+        run: |
+          cd desktop-multiplatform
+          black --check src/ytdlp_desktop
+      - name: Type check (mypy)
+        run: |
+          cd desktop-multiplatform
+          mypy src/ytdlp_desktop
+      - name: Tests (pytest)
+        run: |
+          cd desktop-multiplatform
+          pytest -v
+      - name: Build with PyInstaller
+        run: |
+          cd desktop-multiplatform
+          pip install pyinstaller
+          chmod +x scripts/build-linux.sh
+          ./scripts/build-linux.sh
+      - name: Upload desktop artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: YourFreeDownloader-Linux
+          path: desktop-multiplatform/dist/YourFreeDownloader
+          retention-days: 7
+
+  # Android app build & test
+  android:
+    name: Android App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 11
+          cache: gradle
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+      - name: Grant execute permission for gradlew
+        run: chmod +x mobile-android/gradlew
+      - name: Build Debug APK
+        run: |
+          cd mobile-android
+          ./gradlew assembleDebug --no-daemon
+      - name: Build Release AAB
+        run: |
+          cd mobile-android
+          ./gradlew bundleRelease --no-daemon
+      - name: Run unit tests
+        run: |
+          cd mobile-android
+          ./gradlew test --no-daemon
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: YourFreeDownloader-Android-Debug
+          path: mobile-android/build/outputs/apk/debug/*.apk
+          retention-days: 7
+      - name: Upload Release AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: YourFreeDownloader-Android-Release
+          path: mobile-android/build/outputs/bundle/release/*.aab
+          retention-days: 7
+
+  # Release job
+  release:
+    name: Create Release
+    needs: [desktop, android]
+    if: github.event_name == 'release' && github.event.action == 'published'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download desktop artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: YourFreeDownloader-Linux
+          path: dist/desktop
+      - name: Download Android Debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: YourFreeDownloader-Android-Debug
+          path: dist/android/debug
+      - name: Download Android Release AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: YourFreeDownloader-Android-Release
+          path: dist/android/release
+      - name: Create release archives
+        run: |
+          cd dist/desktop
+          tar -czf ../../YourFreeDownloader-${{ github.event.release.tag_name }}-Linux.tar.gz YourFreeDownloader
+          cd ../android/debug
+          cp *.apk ../../YourFreeDownloader-${{ github.event.release.tag_name }}-Android-Debug.apk
+          cd ../release
+          cp *.aab ../../YourFreeDownloader-${{ github.event.release.tag_name }}-Android-Release.aab
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            YourFreeDownloader-${{ github.event.release.tag_name }}-Linux.tar.gz
+            YourFreeDownloader-${{ github.event.release.tag_name }}-Android-Debug.apk
+            YourFreeDownloader-${{ github.event.release.tag_name }}-Android-Release.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

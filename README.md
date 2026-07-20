@@ -1,191 +1,121 @@
-# YourFreeDownloader - Proyecto Multiplataforma
+# YourFreeDownloader
 
-![Version](https://img.shields.io/badge/version-2.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+Descargador de YouTube multiplataforma: escritorio (Windows/Linux) y Android.
 
-## 📖 Descripción
+## Plataformas
 
-**YourFreeDownloader** es un proyecto multiplataforma para descargar videos y audio de YouTube, disponible tanto para dispositivos móviles Android como para sistemas de escritorio Windows y Linux.
+| Plataforma | Tech Stack | Estado |
+|------------|------------|--------|
+| **Desktop** | Python 3.11+, CustomTkinter, yt-dlp | ✅ Completo |
+| **Android** | Kotlin, Jetpack Compose, Chaquopy (Python) | ✅ Completo |
 
-## 🎯 Plataformas Soportadas
+## Inicio rápido
 
-- 📱 **Android** (API 24+) - Aplicación móvil nativa
-- 🖥️ **Windows** (7/8/10/11) - Aplicación de escritorio
-- 🐧 **Linux** (Todas las distros) - Aplicación de escritorio
+### Desktop (Linux)
 
-## 📂 Estructura del Proyecto
-
-```
-YourFreeDownloader/
-│
-├── 📱 mobile-android/              # Aplicación Android
-│   ├── src/                        # Código fuente Android
-│   ├── build.gradle.kts            # Configuración Gradle
-│   └── README.md                   # Documentación Android
-│
-├── 🖥️ desktop-multiplatform/       # Aplicación de Escritorio (Win/Linux)
-│   ├── src/                        # Código fuente Python
-│   │   └── yt-downlader.py         # Aplicación principal
-│   ├── scripts/                    # Scripts de compilación y ejecución
-│   │   ├── build-linux.sh          # Compilar para Linux
-│   │   ├── build-windows.bat       # Compilar para Windows
-│   │   ├── run-linux.sh            # Ejecutar en Linux
-│   │   └── run-windows.bat         # Ejecutar en Windows
-│   ├── config/                     # Archivos de configuración
-│   ├── docs/                       # Documentación
-│   ├── resources/                  # Recursos (iconos, etc.)
-│   ├── requirements.txt            # Dependencias Python
-│   └── README.md                   # Documentación Desktop
-│
-├── 📦 shared/                      # Código compartido (futuro)
-│   └── (código común entre plataformas)
-│
-├── build.gradle.kts                # Configuración Gradle raíz (Android)
-├── settings.gradle.kts             # Configuración del proyecto Android
-├── gradle.properties               # Propiedades Gradle
-└── README.md                       # Este archivo
-```
-
-## 🚀 Inicio Rápido
-
-### Para la Aplicación de Escritorio (Windows/Linux)
-
-#### ⭐ Forma Más Fácil (Linux):
 ```bash
 ./start.sh
 ```
-Este script automáticamente configura todo y ejecuta la aplicación.
 
-#### Métodos Alternativos:
+O manualmente:
 
-**Linux:**
 ```bash
 cd desktop-multiplatform
-./scripts/run-linux.sh    # Ejecutar directamente
-./scripts/build-linux.sh  # Compilar ejecutable
+./scripts/run-linux.sh
 ```
 
-**Windows:**
-```batch
+### Desktop (Windows)
+
+```cmd
 cd desktop-multiplatform
-scripts\run-windows.bat    REM Ejecutar directamente
-scripts\build-windows.bat  REM Compilar ejecutable
+scripts\run-windows.bat
 ```
 
-#### ⚠️ Importante para Linux:
-- **NO ejecutes:** `pip install customtkinter` directamente (causará errores en sistemas modernos)
-- **USA:** Los scripts proporcionados que manejan entornos virtuales automáticamente
-- **Ver:** [TROUBLESHOOTING_LINUX.md](desktop-multiplatform/TROUBLESHOOTING_LINUX.md) si tienes problemas
-
-### Para la Aplicación Móvil Android
+### Android
 
 ```bash
 cd mobile-android
 ./gradlew assembleDebug
 ```
 
-O abre el proyecto `mobile-android` en Android Studio.
+O abre `mobile-android` en Android Studio.
 
-## ✨ Características
+## Características principales
 
-### Aplicación de Escritorio
-- 🎨 Interfaz gráfica moderna con CustomTkinter
-- 🌓 Tema oscuro/claro
-- 📥 Descarga de videos en múltiples calidades
-- 🎵 Extracción de audio MP3
-- 📊 Progreso en tiempo real
-- 💾 Configuración persistente
+**Desktop**
+- Interfaz CustomTkinter con tema oscuro/claro
+- Descarga video (múltiples calidades MP4) y audio (MP3)
+- Progreso en tiempo real (velocidad, ETA, bytes)
+- Configuración persistente (JSON)
+- Detección automática de FFmpeg (incluido en ejecutable Windows)
+- Descargas concurrentes (3 workers)
 
-### Aplicación Móvil
-- 📱 Interfaz nativa Android
-- 📥 Descarga directa en dispositivo
-- 🎵 Extracción de audio
-- 💾 Gestión de descargas
+**Android**
+- UI Material 3 con Compose
+- ViewModel + StateFlow + corrutinas
+- Scoped Storage (API 29+) + MediaStore
+- Foreground Service para descargas en background
+- Intent filters para URLs de YouTube
+- Python backend via Chaquopy (yt-dlp + ffmpeg-python)
 
-## 🔧 Requisitos
+## Arquitectura
 
-### Aplicación de Escritorio
+Clean Architecture con librería compartida (`shared/ytdlp-core`):
+
+```
+shared/ytdlp-core/     # Domain + Application + Infrastructure (Python)
+├── domain/            # Modelos, puertos (interfaces), excepciones
+├── application/       # Casos de uso
+└── infrastructure/    # Implementaciones yt-dlp, FFmpeg, config, cache
+
+desktop-multiplatform/ # App Python/CustomTkinter
+mobile-android/        # App Kotlin/Compose
+```
+
+Ver [ARCHITECTURE.md](ARCHITECTURE.md) para detalles.
+
+## Requisitos
+
+**Desktop**
 - Python 3.8+
-- **Tk/Tcinter** (para interfaz gráfica en Linux)
-  - Arch: `sudo pacman -S tk`
-  - Ubuntu/Debian: `sudo apt install python3-tk`
-  - Fedora: `sudo dnf install python3-tkinter`
-- FFmpeg (opcional, para conversión de audio)
-- Conexión a Internet
+- Tk/Tkinter (Linux: `python3-tk` / `tk` / `python3-tkinter`)
+- FFmpeg opcional (para MP3 y merge HQ)
 
-### Aplicación Móvil
+**Android**
 - Android Studio
 - JDK 11
-- Android SDK API 36
-- Dispositivo/Emulador con Android 7.0+
+- Android SDK 36
+- Dispositivo/emulador API 24+
 
-## 📚 Documentación Detallada
+## Scripts útiles
 
-- [Documentación Aplicación de Escritorio](desktop-multiplatform/README.md)
-- [Documentación Aplicación Android](mobile-android/README.md)
+| Comando | Descripción |
+|---------|-------------|
+| `./start.sh` | Inicio rápido desktop (Linux) |
+| `desktop-multiplatform/scripts/build-linux.sh` | Compilar ejecutable Linux |
+| `desktop-multiplatform/scripts/build-windows.bat` | Compilar ejecutable Windows |
+| `mobile-android/gradlew assembleDebug` | APK debug |
+| `mobile-android/gradlew bundleRelease` | AAB release |
 
-## 🛠️ Desarrollo
+## Documentación
 
-### Compilar para todas las plataformas:
+- [Arquitectura](ARCHITECTURE.md) - Clean Architecture, DI, capas
+- [Contribuir](CONTRIBUTING.md) - Setup, convención commits, PRs, testing
+- [Desktop README](desktop-multiplatform/README.md) - Instalación, troubleshooting Linux
+- [Android README](mobile-android/README.md) - Build, estructura, Chaquopy
+- [Troubleshooting Linux](desktop-multiplatform/TROUBLESHOOTING_LINUX.md) - Errores comunes Linux
 
-#### Desktop - Linux:
-```bash
-cd desktop-multiplatform/scripts
-./build-linux.sh
-```
+## Licencia
 
-#### Desktop - Windows:
-```batch
-cd desktop-multiplatform\scripts
-build-windows.bat
-```
+MIT - ver [LICENSE](LICENSE)
 
-#### Móvil - Android:
-```bash
-cd mobile-android
-./gradlew assembleRelease
-```
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver archivo [LICENSE](LICENSE) para más detalles.
-
-## 👤 Autor
+## Autor
 
 **HanserlodXP**
 
-## 🙏 Agradecimientos
+## Agradecimientos
 
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) - Motor de descarga de YouTube
-- [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) - Framework de UI para Desktop
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) - Motor de descarga
+- [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) - UI desktop
 - [FFmpeg](https://ffmpeg.org/) - Procesamiento multimedia
 - [Chaquopy](https://chaquo.com/chaquopy/) - Python en Android
-
-## 🗺️ Roadmap
-
-- [ ] Mejoras en la UI de Android
-- [ ] Sincronización de descargas entre dispositivos
-- [ ] Soporte para más plataformas de video
-- [ ] Sistema de colas de descarga mejorado
-- [ ] Versión para macOS
-- [ ] Integración con servicios en la nube
-
-## 📞 Soporte
-
-Si encuentras algún problema o tienes sugerencias, por favor abre un [issue](https://github.com/hanserlodev/YourFreeDownloader/issues) en GitHub.
-
----
-
-⭐ Si te gusta este proyecto, ¡dale una estrella en GitHub!
-
-🔄 Última actualización: Febrero 2026
