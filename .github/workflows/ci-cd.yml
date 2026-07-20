@@ -48,9 +48,11 @@ jobs:
           cd shared
           pytest -v --cov=ytdlp_core --cov-report=xml
       - name: Upload coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./shared/coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+        continue-on-error: true
 
   # Desktop app build & test
   desktop:
@@ -68,8 +70,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3-tk ffmpeg
       - name: Install shared library
-        run: |
-          pip install -e ./shared
+        run: pip install -e ./shared
       - name: Install desktop dependencies
         run: |
           cd desktop-multiplatform
@@ -117,32 +118,32 @@ jobs:
           java-version: 11
           cache: gradle
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Grant execute permission for gradlew
         run: chmod +x mobile-android/gradlew
       - name: Build Debug APK
         run: |
           cd mobile-android
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew :app:assembleDebug --no-daemon
       - name: Build Release AAB
         run: |
           cd mobile-android
-          ./gradlew bundleRelease --no-daemon
+          ./gradlew :app:bundleRelease --no-daemon
       - name: Run unit tests
         run: |
           cd mobile-android
-          ./gradlew test --no-daemon
+          ./gradlew :app:test --no-daemon
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: YourFreeDownloader-Android-Debug
-          path: mobile-android/build/outputs/apk/debug/*.apk
+          path: mobile-android/app/build/outputs/apk/debug/*.apk
           retention-days: 7
       - name: Upload Release AAB
         uses: actions/upload-artifact@v4
         with:
           name: YourFreeDownloader-Android-Release
-          path: mobile-android/build/outputs/bundle/release/*.aab
+          path: mobile-android/app/build/outputs/bundle/release/*.aab
           retention-days: 7
 
   # Release job
